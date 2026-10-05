@@ -47,7 +47,7 @@ jobs:
         run: |
           node --input-type=module -e '
             import fs from "node:fs";
-            const file = "dist/JS_WebUtils.js";
+            const file = "dist/JS_WebUtils.user.js";
             const source = fs.readFileSync(file, "utf8");
             const version = process.env.RELEASE_VERSION;
             const updated = source.replace(/^(\/\/ @version\s+).*$/m, `$1${version}`);
@@ -62,5 +62,5 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: JS WebUtils ${{ steps.release.outputs.tag }}
           generate_release_notes: true
-          files: dist/JS_WebUtils.js
+          files: dist/JS_WebUtils.user.js
           fail_on_unmatched_files: true

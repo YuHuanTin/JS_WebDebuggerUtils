@@ -6,7 +6,7 @@ import { build } from "esbuild";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const headerPath = path.join(root, "src", "userscript-header.txt");
 const outputDirectory = path.join(root, "dist");
-const outputFile = path.join(outputDirectory, "JS_WebUtils.js");
+const outputFile = path.join(outputDirectory, "JS_WebUtils.user.js");
 const header = fs.readFileSync(headerPath, "utf8").trimEnd();
 
 fs.mkdirSync(outputDirectory, { recursive: true });

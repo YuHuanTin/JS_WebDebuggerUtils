@@ -4,8 +4,8 @@
 // @version      0.0.1
 // @author       Anonymous
 // @description  Configurable debugging utilities for any HTTP(S) website.
-// @downloadURL  https://github.com/YuHuanTin/JS_WebDebuggerUtils/releases/latest/download/JS_WebUtils.js
-// @updateURL    https://github.com/YuHuanTin/JS_WebDebuggerUtils/releases/latest/download/JS_WebUtils.js
+// @downloadURL  https://github.com/YuHuanTin/JS_WebDebuggerUtils/releases/latest/download/JS_WebUtils.user.js
+// @updateURL    https://github.com/YuHuanTin/JS_WebDebuggerUtils/releases/latest/download/JS_WebUtils.user.js
 // @match        *://*/*
 // @grant        GM_getValue
 // @grant        GM_setValue

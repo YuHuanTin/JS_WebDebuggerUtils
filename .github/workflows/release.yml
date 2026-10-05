@@ -1,0 +1,66 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install build dependencies
+        run: npm install --no-package-lock --no-audit --no-fund
+
+      - name: Build userscript
+        run: npm run build
+
+      - name: Calculate release identity
+        id: release
+        shell: bash
+        run: |
+          version=$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")
+          short_sha="${GITHUB_SHA:0:7}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "userscript_version=${version}.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${version}-${short_sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp userscript version
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.userscript_version }}
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const file = "dist/JS_WebUtils.js";
+            const source = fs.readFileSync(file, "utf8");
+            const version = process.env.RELEASE_VERSION;
+            const updated = source.replace(/^(\/\/ @version\s+).*$/m, `$1${version}`);
+            if (updated === source) throw new Error("Userscript version header was not found.");
+            fs.writeFileSync(file, updated);
+          '
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: JS WebUtils ${{ steps.release.outputs.tag }}
+          generate_release_notes: true
+          files: dist/JS_WebUtils.js
+          fail_on_unmatched_files: true
